@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package pix.events.v1;
+
+option go_package = "github.com/example/pix/proto/gen/go/events/v1;eventsv1";
+option java_package = "com.example.pix.events.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Pix.Events.V1";
+
+// PaymentEventType enumerates the event types published on state transitions.
+enum PaymentEventType {
+  PAYMENT_EVENT_TYPE_UNSPECIFIED = 0;
+  PAYMENT_EVENT_TYPE_CREATED     = 1;
+  PAYMENT_EVENT_TYPE_VALIDATING  = 2;
+  PAYMENT_EVENT_TYPE_SUBMITTED   = 3;
+  PAYMENT_EVENT_TYPE_SETTLED     = 4;
+  PAYMENT_EVENT_TYPE_FAILED      = 5;
+  PAYMENT_EVENT_TYPE_REVERSING   = 6;
+  PAYMENT_EVENT_TYPE_REVERSED    = 7;
+}
+
+// PaymentEvent is published to the in-process event bus on every payment
+// state transition. Consumed by notification-worker to fan out webhooks.
+message PaymentEvent {
+  string           event_id       = 1;
+  string           payment_id     = 2;
+  PaymentEventType event_type     = 3;
+  string           previous_state = 4;
+  string           new_state      = 5;
+  int64            occurred_at_unix = 6;
+  string           reason_code    = 7; // optional — set on FAILED/REVERSED
+}

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>api-gateway</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- gRPC client code generation from shared proto files -->
+    <Protobuf Include="..\proto\payment.proto" GrpcServices="Client" />
+    <Protobuf Include="..\proto\keys.proto"    GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore"           Version="2.63.0" />
+    <PackageReference Include="Google.Protobuf"            Version="3.27.0" />
+    <PackageReference Include="Grpc.Tools"                 Version="2.63.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

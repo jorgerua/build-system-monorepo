@@ -1,0 +1,6 @@
+{
+    "go.toolsEnvVars": {
+        "GOPROXY": "",
+        "GOINSECURE": "*.prod.aws.cloud.ihf"
+    }
+}
