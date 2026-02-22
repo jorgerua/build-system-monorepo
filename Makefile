@@ -1,5 +1,5 @@
 # Root Makefile — PIX Payment Processing Monorepo
-# Build tool: GNU Make (chosen for universal language support — Go, Java, C#, Robot Framework, K6)
+# Build tool: GNU Make + Nx (chosen for universal language support — Go, Java, C#, Robot Framework, K6)
 # Execution order: proto-gen → packages → tests
 
 .PHONY: all proto-gen \
@@ -16,19 +16,32 @@ PAYMENT_CORE_GRPC_PORT  ?= 9090
 KEY_MGMT_GRPC_PORT      ?= 9091
 # notification-worker is a background worker; no inbound port
 
+# ── Nx wrapper ────────────────────────────────────────────────────────────────
+NX ?= ./nx
+
 # ── Proto generation ──────────────────────────────────────────────────────────
 proto-gen:
 	@echo "==> Generating proto stubs..."
 	$(MAKE) -C proto all
 
+# ── Aggregate build (all packages via Nx, parallel) ──────────────────────────
+build: proto-gen
+	@echo "==> Building all packages via Nx..."
+	$(NX) run-many -t build --parallel=4
+
+# ── Aggregate test (all packages via Nx, parallel) ───────────────────────────
+test: proto-gen
+	@echo "==> Running unit tests for all packages via Nx..."
+	$(NX) run-many -t test --parallel=4
+
 # ── payment-core (Go) ─────────────────────────────────────────────────────────
 payment-core-build: proto-gen
 	@echo "==> Building payment-core..."
-	cd payment-core && go build ./...
+	$(NX) run payment-core:build
 
 payment-core-test: proto-gen
 	@echo "==> Testing payment-core..."
-	cd payment-core && go test ./...
+	$(NX) run payment-core:test
 
 payment-core-lint:
 	@echo "==> Linting payment-core..."
@@ -37,11 +50,11 @@ payment-core-lint:
 # ── notification-worker (Go) ──────────────────────────────────────────────────
 notification-worker-build: proto-gen
 	@echo "==> Building notification-worker..."
-	cd notification-worker && go build ./...
+	$(NX) run notification-worker:build
 
 notification-worker-test: proto-gen
 	@echo "==> Testing notification-worker..."
-	cd notification-worker && go test ./...
+	$(NX) run notification-worker:test
 
 notification-worker-lint:
 	@echo "==> Linting notification-worker..."
@@ -50,11 +63,11 @@ notification-worker-lint:
 # ── key-management (Java/Gradle) ─────────────────────────────────────────────
 key-management-build: proto-gen
 	@echo "==> Building key-management..."
-	cd key-management && ./gradlew build -x test
+	$(NX) run key-management:build
 
 key-management-test: proto-gen
 	@echo "==> Testing key-management..."
-	cd key-management && ./gradlew test
+	$(NX) run key-management:test
 
 key-management-lint:
 	@echo "==> Linting key-management..."
@@ -63,11 +76,11 @@ key-management-lint:
 # ── api-gateway (C# / .NET) ──────────────────────────────────────────────────
 api-gateway-build: proto-gen
 	@echo "==> Building api-gateway..."
-	cd api-gateway && dotnet build
+	$(NX) run api-gateway:build
 
 api-gateway-test: proto-gen
 	@echo "==> Testing api-gateway..."
-	cd api-gateway && dotnet test
+	$(NX) run api-gateway:test
 
 api-gateway-lint:
 	@echo "==> Linting api-gateway..."
@@ -83,13 +96,10 @@ perf-tests:
 	@echo "==> Running performance tests (optional)..."
 	$(MAKE) -C perf-tests run
 
-# ── Aggregate targets ─────────────────────────────────────────────────────────
-build: payment-core-build notification-worker-build key-management-build api-gateway-build
-
-test: payment-core-test notification-worker-test key-management-test api-gateway-test
-
+# ── Lint aggregate ────────────────────────────────────────────────────────────
 lint: payment-core-lint notification-worker-lint key-management-lint api-gateway-lint
 
+# ── Full pipeline ─────────────────────────────────────────────────────────────
 all: proto-gen build test lint integration-tests
 
 clean:

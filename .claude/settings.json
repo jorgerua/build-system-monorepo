@@ -11,7 +11,8 @@
       "Bash(choco install:*)",
       "Bash(go install:*)",
       "Bash(go mod init:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(./nx show:*)"
     ],
     "additionalDirectories": [
       "\\tmp\\protoc\\bin",

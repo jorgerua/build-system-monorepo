@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package pix.keys.v1;
+
+option go_package = "github.com/example/pix/proto/gen/go/keys/v1;keysv1";
+option java_package = "com.example.pix.keys.v1";
+option java_multiple_files = true;
+option csharp_namespace = "Pix.Keys.V1";
+
+// KeyType enumerates the PIX key types supported by DICT/BCB.
+enum KeyType {
+  KEY_TYPE_UNSPECIFIED = 0;
+  KEY_TYPE_CPF         = 1;
+  KEY_TYPE_CNPJ        = 2;
+  KEY_TYPE_EMAIL       = 3;
+  KEY_TYPE_PHONE       = 4; // E.164 with +55 prefix
+  KEY_TYPE_RANDOM      = 5; // UUID v4
+}
+
+// PortabilityClaimState tracks the state of a portability claim.
+enum PortabilityClaimState {
+  PORTABILITY_CLAIM_STATE_UNSPECIFIED = 0;
+  PORTABILITY_CLAIM_STATE_PENDING     = 1;
+  PORTABILITY_CLAIM_STATE_CONFIRMED   = 2;
+  PORTABILITY_CLAIM_STATE_CANCELLED   = 3;
+}
+
+// PixKey is a registered PIX key with its associated account info.
+message PixKey {
+  string   key            = 1;
+  KeyType  key_type       = 2;
+  string   account_holder = 3;
+  string   account_branch = 4;
+  string   account_number = 5;
+  string   owner_id       = 6;
+  int64    created_at_unix = 7;
+}
+
+// PortabilityClaim tracks an in-flight portability request.
+message PortabilityClaim {
+  string                claim_id         = 1;
+  string                key              = 2;
+  string                requesting_owner = 3;
+  PortabilityClaimState state            = 4;
+  int64                 initiated_at_unix = 5;
+  int64                 expires_at_unix   = 6;
+}
+
+// RegisterKeyRequest registers a new PIX key.
+message RegisterKeyRequest {
+  string  key      = 1; // empty for random type — server generates UUID v4
+  KeyType key_type = 2;
+  string  owner_id = 3;
+  string  account_holder = 4;
+  string  account_branch = 5;
+  string  account_number = 6;
+}
+
+message RegisterKeyResponse {
+  PixKey pix_key = 1;
+}
+
+// LookupKeyRequest resolves a PIX key via DICT (with local cache).
+message LookupKeyRequest {
+  string key = 1;
+}
+
+message LookupKeyResponse {
+  PixKey pix_key = 1;
+}
+
+// DeleteKeyRequest removes a PIX key (ownership enforced).
+message DeleteKeyRequest {
+  string key      = 1;
+  string owner_id = 2;
+}
+
+message DeleteKeyResponse {}
+
+// InitiatePortabilityRequest starts a portability claim.
+message InitiatePortabilityRequest {
+  string key              = 1;
+  string requesting_owner = 2;
+}
+
+message InitiatePortabilityResponse {
+  PortabilityClaim claim = 1;
+}
+
+// ConfirmPortabilityRequest confirms and completes a portability claim.
+message ConfirmPortabilityRequest {
+  string claim_id         = 1;
+  string confirming_owner = 2;
+}
+
+message ConfirmPortabilityResponse {
+  PixKey pix_key = 1;
+}
+
+// KeyManagementService exposes PIX key operations over gRPC.
+service KeyManagementService {
+  rpc RegisterKey          (RegisterKeyRequest)          returns (RegisterKeyResponse);
+  rpc LookupKey            (LookupKeyRequest)            returns (LookupKeyResponse);
+  rpc DeleteKey            (DeleteKeyRequest)            returns (DeleteKeyResponse);
+  rpc InitiatePortability  (InitiatePortabilityRequest)  returns (InitiatePortabilityResponse);
+  rpc ConfirmPortability   (ConfirmPortabilityRequest)   returns (ConfirmPortabilityResponse);
+}

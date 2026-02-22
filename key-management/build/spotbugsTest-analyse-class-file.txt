@@ -1,0 +1,2 @@
+C:\sources\build-system-monorepo\key-management\build\classes\java\test\com\example\pix\keys\KeyManagementServiceTest.class
+C:\sources\build-system-monorepo\key-management\build\classes\java\test\com\example\pix\keys\KeyValidatorTest.class

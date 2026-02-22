@@ -1,5 +1,32 @@
 {
   "installation": {
     "version": "22.5.2"
+  },
+  "defaultBase": "main",
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/bin/**",
+      "!{projectRoot}/obj/**",
+      "!{projectRoot}/build/**",
+      "!{projectRoot}/.gradle/**",
+      "!{projectRoot}/TestResults/**",
+      "sharedGlobals"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/proto/**/*",
+      "{workspaceRoot}/go.work",
+      "{workspaceRoot}/go.work.sum"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    }
   }
 }
