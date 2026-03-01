@@ -1,9 +1,0 @@
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.csproj.AssemblyReference.cache
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\rpswa.dswa.cache.json
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.GeneratedMSBuildEditorConfig.editorconfig
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.AssemblyInfoInputs.cache
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.AssemblyInfo.cs
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.csproj.CoreCompileInputs.cache
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.MvcApplicationPartsAssemblyInfo.cs
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.MvcApplicationPartsAssemblyInfo.cache
-C:\sources\build-system-monorepo\api-gateway\obj\Debug\net8.0\api-gateway.sourcelink.json

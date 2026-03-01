@@ -1,32 +1,22 @@
 {
   "installation": {
-    "version": "22.5.2"
+    "version": "22.5.3",
+    "plugins": {
+      "@nx/dotnet": "22.5.3"
+    }
   },
-  "defaultBase": "main",
+  "plugins": [
+    "@nx/dotnet"
+  ],
   "namedInputs": {
     "default": [
-      "{projectRoot}/**/*",
-      "!{projectRoot}/bin/**",
-      "!{projectRoot}/obj/**",
-      "!{projectRoot}/build/**",
-      "!{projectRoot}/.gradle/**",
-      "!{projectRoot}/TestResults/**",
-      "sharedGlobals"
+      "{projectRoot}/**/*"
     ],
-    "sharedGlobals": [
-      "{workspaceRoot}/proto/**/*",
-      "{workspaceRoot}/go.work",
-      "{workspaceRoot}/go.work.sum"
+    "production": [
+      "default",
+      "!{projectRoot}/**/*.Tests/**/*",
+      "!{projectRoot}/**/bin/**/*",
+      "!{projectRoot}/**/obj/**/*"
     ]
-  },
-  "targetDefaults": {
-    "build": {
-      "cache": true,
-      "inputs": ["default", "^default"]
-    },
-    "test": {
-      "cache": true,
-      "inputs": ["default", "^default"]
-    }
   }
 }
